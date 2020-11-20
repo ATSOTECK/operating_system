@@ -1,0 +1,171 @@
+Types:
+int
+int8
+int16
+int32
+int64
+
+uint
+uint8
+uint16
+uint32
+uint64
+
+float
+double
+
+char
+string
+
+empty_t //void
+
+null_t
+type <newName> as <type>
+type ID as int
+
+Declare variables:
+
+var <name>: <type> = value 
+
+var x = 12 //int
+var z = 12.6 //float
+var z = 12.6d //double
+
+Declare constants:
+
+Use val, same as var.
+
+Functions:
+
+<name>(<arg>: <type>): <type>
+
+add(x: int, y: int): int {
+    //
+}
+
+//No need to use void
+sayHi() {
+    //
+}
+
+Comments:
+// for single line
+
+/-
+ - Mutiline comments start with /- and end with -/ and can be nested.
+ -/
+ 
+#singleWordComment
+
+Numbers:
+1_000_000 //is the same as 1000000.
+10.f //float
+10.5f
+10.d //double
+10.5d
+
+0xA //hex
+0b101 //binary
+
+Keywords:
+struct
+new
+delete
+
+for
+while
+until
+do
+break
+continue
+if
+else
+elif
+delay ?
+repeat
+goto
+return
+when
+
+var
+val
+ref ?
+global
+local
+external
+
+true
+false
+
+type
+as
+cast ?
+
+use
+import ?
+package
+
+Including files:
+use "filename" //local files
+use <filename> //searchpath files (eg language lib files)
+or should it be
+import "filename"
+
+Packages:
+
+Used to make code distinct. Sets the package for everything following. 
+You could have multiple packages in the same file.
+Packages can't be nested.
+
+package <name>
+
+To use code from a package you use the . operator
+
+package math
+...
+math.random()
+math.pow(x, 2)
+
+To use a package use the "use" keyword.
+
+use math
+random()
+pow(x, 2)
+
+Pointers:
+Declare a pointer by
+var x: *int
+
+To get memory use the "new" keyword
+var str = new[<size>] type
+Size is in bytes. 1 is the default so the following is valid
+var str = new char 
+
+Pointers use the -> operator instead of the . operator.
+
+Address of operator is @
+var x = @y
+
+Structs:
+
+struct <name> {
+    <name>: <type> = <defaultValue>
+    <name>: <type>
+}
+
+<name>: struct = {
+    <name>: <type> = <defaultValue>
+    <name>: <type>
+}
+
+string: struct = {
+    data: *char
+    size: int
+    len: int
+}
+
+string: packed_struct = {
+    data: *char
+    size: int
+    len: int
+}

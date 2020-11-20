@@ -1,25 +1,81 @@
+#include "common.h"
+
+void puts(char *s);
+void drawRect(int _x, int _y, int w, int h, int s, int color);
+
+#include <bootboot.h>
+
+/* imported virtual addresses, see linker script */
+extern BOOTBOOT bootboot;               // see bootboot.h
+extern unsigned char environment[4096]; // configuration, UTF-8 text key=value pairs
+extern uint8_t fb;                      // linear framebuffer mapped
+
 /*
- * operating_system
- * Copyright (c) 2020 Skyler Burwell
- *
- * This software is provided 'as-is', without any express or implied
- * warranty. In no event will the authors be held liable for any damages
- * arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- *
+ * Entry point. Must be first function in the file.
  */
 
-void _kstart() {
-    for (;;);
+void _start() {
+    /*** NOTE: this code runs on all cores in parallel ***/
+    int x, y, s=bootboot.fb_scanline, w=bootboot.fb_width, h=bootboot.fb_height;
+
+    // cross-hair to see screen dimension detected correctly
+    for(y=0;y<h;y++) { *((uint32_t*)(&fb + s*y + (w*2)))=0x00FFFFFF; }
+    for(x=0;x<w;x++) { *((uint32_t*)(&fb + s*(h/2)+x*4))=0x00FFFFFF; }
+
+    // red, green, blue boxes in order
+    for(y=0;y<20;y++) { for(x=0;x<20;x++) { *((uint32_t*)(&fb + s*(y+20) + (x+20)*4))=0x00FF0000; } }
+    for(y=0;y<20;y++) { for(x=0;x<20;x++) { *((uint32_t*)(&fb + s*(y+20) + (x+50)*4))=0x0000FF00; } }
+    for(y=0;y<20;y++) { for(x=0;x<20;x++) { *((uint32_t*)(&fb + s*(y+20) + (x+80)*4))=0x000000FF; } }
+    
+    drawRect(110, 20, 20, 20, s, 0x00FF00FF);
+
+    // say hello
+    puts("Hello World from a simple kernel!");
+
+    // hang for now
+    while(1);
+}
+
+/**************************
+ * Display text on screen *
+ **************************/
+typedef struct {
+    uint32_t magic;
+    uint32_t version;
+    uint32_t headersize;
+    uint32_t flags;
+    uint32_t numglyph;
+    uint32_t bytesperglyph;
+    uint32_t height;
+    uint32_t width;
+    uint8_t glyphs;
+} __attribute__((packed)) psf2_t;
+extern volatile unsigned char _binary_font_psf_start;
+
+void puts(char *s) {
+    psf2_t *font = (psf2_t*)&_binary_font_psf_start;
+    int x,y,kx=0,line,mask,offs;
+    int bpl=(font->width+7)/8;
+    while(*s) {
+        unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headersize +
+            (*s>0&&*s<font->numglyph?*s:0)*font->bytesperglyph;
+        offs = (kx * (font->width+1) * 4);
+        for(y=0;y<font->height;y++) {
+            line=offs; mask=1<<(font->width-1);
+            for(x=0;x<font->width;x++) {
+                *((uint32_t*)((uint64_t)&fb+line))=((int)*glyph) & (mask)?0xFFFFFF:0;
+                mask>>=1; line+=4;
+            }
+            *((uint32_t*)((uint64_t)&fb+line))=0; glyph+=bpl; offs+=bootboot.fb_scanline;
+        }
+        s++; kx++;
+    }
+}
+
+void drawRect(int _x, int _y, int w, int h, int s, int color) {
+    for (int y = _y; y < _y + h; ++y) {
+        for(int x = _x; x < _x + h; ++x) { 
+            *((uint32_t*)(&fb + s * y + x * 4)) = color; 
+        }
+    }
 }
