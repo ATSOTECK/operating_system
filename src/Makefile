@@ -1,21 +1,26 @@
 CC = gcc
-CFLAGS = -Wall -fpic -ffreestanding -fno-stack-protector -nostdinc -nostdlib -I../inc/
+CFLAGS = -Wall -m64 -fpic -ffreestanding -fno-stack-protector -nostdinc -nostdlib \
+	-I../inc/ -mno-red-zone -O0 -mno-mmx -mno-80387
 
 LIBFILES = lib/math.c lib/print.c
 
-all: kernel clean
+all: kernel install clean
 
-kernel: libs kmain.c
-	gcc $(CFLAGS) -mno-red-zone -c kmain.c -o kernel.o
+kernel: libs font kmain.c
+	gcc $(CFLAGS) -c kmain.c -o kernel.o
+	ld -nostdlib -nostartfiles -T link.ld kernel.o math.o print.o font.o -o kernel.elf
+	
+font: font.psf
 	ld -r -b binary -o font.o font.psf
-	ld -nostdlib -nostartfiles -T link.ld kernel.o font.o math.o print.o -o kernel.elf
-	strip -s -K mmio -K fb -K bootboot -K environment kernel.elf
-	readelf -hls kernel.elf >kernel.txt
-	cp kernel.elf ../out/initrd/sys/core
 	
 libs: $(LIBFILES)
 	gcc $(CFLAGS) -c lib/math.c -o math.o
 	gcc $(CFLAGS) -c lib/print.c -o print.o
+	
+install:
+	strip -s -K mmio -K fb -K bootboot -K environment kernel.elf
+	readelf -hls kernel.elf >kernel.txt
+	cp kernel.elf ../out/initrd/sys/core
 	
 clean:
 	rm *.o *.elf *.txt

@@ -19,6 +19,8 @@ typedef struct {
 } __attribute__((packed)) psf2_t;
 extern volatile unsigned char _binary_font_psf_start;
 
+void __initPrint(void);
+
 void puts(char *s, int x, int y);
 void prints(char *s, int x, int y);
 void putchar(unsigned short int c, int cx, int cy, uint32_t fg, uint32_t bg);

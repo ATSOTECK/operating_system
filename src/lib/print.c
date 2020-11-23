@@ -6,11 +6,27 @@
 extern BOOTBOOT bootboot;
 extern uint8_t fb;
 
+uint32_t txtColor = c_white;
+uint32_t bgColor = c_black;
+
+volatile psf2_t *font = (psf2_t*)&_binary_font_psf_start;
+
+void __initPrint(void) {
+    txtColor = c_white;
+    bgColor = c_black;
+}
+
 void puts(char *s, int x, int y) {
     int cx = 0, cy = 0;
     
     while (*s) {
-        putchar(*s, x + cx, y + cy, c_white, c_black);
+        if (*s == '\n') {
+            cy++;
+            cx = 0;
+            s++;
+        }
+        
+        putchar(*s, x + cx, y + cy, txtColor, bgColor);
         cx++;
         s++;
     }
@@ -18,10 +34,15 @@ void puts(char *s, int x, int y) {
 
 void prints(char *s, int x, int y) {
     int cx = 0, cy = 0;
-    psf2_t *font = (psf2_t*)&_binary_font_psf_start;
     
     while (*s) {
-        printchar(*s, x + cx, y + cy, c_black);
+        if (*s == '\n') {
+            cy += font->height + 1;
+            cx = 0;
+            s++;
+        }
+        
+        printchar(*s, x + cx, y + cy, txtColor);
         cx += font->width + 1;
         s++;
     }
@@ -35,8 +56,6 @@ void putchar(
     /* foreground and background colors, say 0xFFFFFF and 0x000000 */
     uint32_t fg, uint32_t bg)
 {
-    /* cast the address to PSF header struct */
-    psf2_t *font = (psf2_t*)&_binary_font_psf_start;
     /* we need to know how many bytes encode one row */
     int bytesperline=(font->width+7)/8;
     /* get the glyph for the character. If there's no
@@ -70,8 +89,6 @@ void putchar(
 }
 
 void printchar(unsigned short int c, int cx, int cy, uint32_t color) {
-    /* cast the address to PSF header struct */
-    psf2_t *font = (psf2_t*)&_binary_font_psf_start;
     /* we need to know how many bytes encode one row */
     int bytesperline=(font->width+7)/8;
     /* get the glyph for the character. If there's no

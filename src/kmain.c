@@ -19,16 +19,19 @@ extern BOOTBOOT bootboot;               // see bootboot.h
 extern unsigned char environment[4096]; // configuration, UTF-8 text key=value pairs
 extern uint8_t fb;                      // linear framebuffer mapped
 
-int clearColor = c_white;
+int clearColor = c_black;
 
 /*
  * Entry point. Must be first function in the file.
  */
 
 void _start() {
+    __initPrint();
+    
+    
     /*** NOTE: this code runs on all cores in parallel ***/
-    int w=bootboot.fb_width, h=bootboot.fb_height;
-    clear();
+    //int w=bootboot.fb_width, h=bootboot.fb_height;
+    //clear();
 
     drawRect(0, 0, 20, 20, 0x002244FF);
 
@@ -52,21 +55,18 @@ void _start() {
     for (int i = 3; i < 40; ++i) {
         puts("YA YEET", 0, i);
         prints("YA YEET", 64, i * 16);
-        putchar(itoc(i), 20, i, c_red, c_black);
+        putchar(itoc(i), 20, i, c_red, c_blue);
     }
     
-    setPixel(w/2, h/2, c_black);
+    //setPixel(w/2, h/2, c_red);
     
     //clearWith(c_red);
+    
+    puts("The quick brown fox jumped over the lazy dog\nhello", 22, 10);
+    prints("The quick brown fox jumped over the lazy dog\nhello", 200, 200);
 
     // hang for now
-    while(true) {
-        /*
-        clear(c_red);
-        drawRect(0, 0, 100, 100, c_green);
-        clear(c_black);
-        */
-    }
+    while(true) {}
 }
 
 void drawRect(int _x, int _y, int w, int h, int color) {
@@ -100,6 +100,7 @@ void clearWith(int color) {
         }
     }
 }
+
 /*
 void line(int x1, int y1, int x2, int y2, uint32_t color) {
     bool steep = false;
