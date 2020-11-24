@@ -1,3 +1,3 @@
 @echo off
 
-qemu-system-i386 -hda boot.bin
+qemu-system-x86_64 -blockdev driver=file,node-name=f0,filename=boot.bin -device floppy,drive=f0

@@ -16,6 +16,14 @@ print_bios:
     popa                                    ;pop registers
     ret                                     ;return
     
+println_bios:
+    call print_bios
+    mov bx, .nl
+    call print_bios
+    ret
+
+.nl: db 0xA, 0xD, 0
+    
 print_bios_hex:
     pusha                                   ;push registers on to the stack
     mov bx, .hex                            ;
@@ -42,5 +50,5 @@ print_bios_hex:
     ret                                     ;return
     
 .hexdigits: db '0123456789ABCDEF', 0
-.char db "0", 0
+.char: db "0", 0
 .hex: db "0x", 0

@@ -1,9 +1,11 @@
 [bits 32]
-videoMem equ 0xb8000
+videoMem equ 0xB8000
 txtColor equ 0x4F                               ;white on red
 
 print:
     pusha
+    
+.print_pos:
     mov edx, videoMem                           ;set edx to start of video memory
 
 .print_loop:
@@ -20,5 +22,22 @@ print:
     jmp .print_loop
 
 .print_done:
+    popa
+    ret
+    
+cls:
+    pusha
+    mov dword [videoMem], 0xB8000
+    mov eax, 0xFFFF
+    
+.cls_loop:
+    dec eax
+    cmp eax, 0
+    je .cls_done
+    
+    mov word[videoMem + eax], 0
+    jmp .cls_loop
+    
+.cls_done:
     popa
     ret

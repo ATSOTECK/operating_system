@@ -19,15 +19,14 @@ disk_load:
     
 .disk_read_error:
     mov bx, .diskReadError
-    call print
+    call println_bios
     jmp $                                   ;just hang after error
     
 .disk_error_sector_count:
     mov bx, .diskSectorCountError
-    call print
+    call println_bios
     jmp $                                   ;just hang after error     
     
-.bootDrive: db 0
 .diskReadError: db "Disk read error!", 0
 .diskSectorCountError: db "Sector count mismatch!", 0
 

@@ -1,8 +1,0 @@
-{
-    "disksize" : 128,
-    "config" : "./config",
-    "initrd" : {"type": "cpio", "gzip" : false, "directory": "initrd"},
-    "partitions" : [
-        {"type" : "boot", "size" : 16}
-    ]
-}
