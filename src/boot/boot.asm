@@ -1,7 +1,7 @@
 [org 0x7C00]                                ;Where the code will be loaded in memory
 kernelOffset equ 0x1000                     ;memory offset to load kernel
 
-    mov [bootDrive], dl                    ;BIOS stores boot drive in dl
+    mov [bootDrive], dl                     ;BIOS stores boot drive in dl
 
     mov bp, 0x9000                          ;set the stack
     mov sp, bp

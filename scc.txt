@@ -1,17 +1,17 @@
-http://cloc.sourceforge.net v 1.62  T=0.02 s (524.9 files/s, 14959.0 lines/s)
+http://cloc.sourceforge.net v 1.62  T=0.02 s (522.1 files/s, 15873.1 lines/s)
 -----------------------------------------------------------------------------------------
 File                                       blank        comment           code
 -----------------------------------------------------------------------------------------
 .\src\boot\print_bios.asm                     10              0             44
-.\src\boot\boot.asm                           19              6             43
-.\src\boot\print.asm                          10              0             30
+.\src\boot\boot.asm                           18              5             42
+.\src\boot\print.asm                          11              0             32
 .\src\boot\gdt.asm                             6              0             24
 .\src\boot\disk.asm                            8              4             23
 .\src\boot\pm.asm                              5              0             19
+.\src\kmain.c                                  3              6             12
+.\Makefile                                     4              0             11
 .\inc\types.h                                  3              0              9
-.\Makefile                                     4              0              8
 .\src\boot\kernel_entry.asm                    0              0              5
-.\src\kmain.c                                  0              0              5
 -----------------------------------------------------------------------------------------
-SUM:                                          65             10            210
+SUM:                                          68             15            221
 -----------------------------------------------------------------------------------------
