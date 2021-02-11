@@ -14,12 +14,6 @@ kernelOffset equ 0x1000                     ;memory offset to load kernel
     call switch_to_pm
     
     jmp $
-
-;%include "print_bios.asm"
-;%include "disk.asm"
-;%include "gdt.asm"
-;%include "print.asm"
-;%include "pm.asm"
     
 %include "src/boot/print_bios.asm"
 %include "src/boot/disk.asm"
@@ -43,7 +37,6 @@ load_kernel:
     ret
 
 [bits 32]
-[extern kmain]
 begin_pm:
     call cls
 
